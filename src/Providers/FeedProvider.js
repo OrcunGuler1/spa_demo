@@ -15,7 +15,7 @@ const FeedProvider = (props) => {
     getFeed();
   }, [getFeed]);
   return (
-    <FeedContext.Provider value={{ feed, setFeed }}>
+    <FeedContext.Provider value={{ feed, setFeed, getFeed }}>
       {props.children}
     </FeedContext.Provider>
   );

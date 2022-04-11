@@ -2,23 +2,44 @@ import React, { useContext, useState } from "react";
 import FeedCard from "./FeedCard";
 import { FeedContext } from "../../Providers/FeedProvider";
 import { ThreadContext } from "../../Providers/ThreadProvider";
+import { DateTime } from "luxon";
 const Feed = () => {
   const [selectPopular, setSelectPopular] = useState(true);
-  const { feed } = useContext(FeedContext);
-  const { threads, currentThread, setCurrentThread, setCurrentThreadIndex } =
-    useContext(ThreadContext);
+  const [selectRecent, setSelectRecent] = useState(false);
+  const { feed, setFeed, getFeed } = useContext(FeedContext);
+  const { threads, setCurrentThread, setCurrentThreadIndex } =
+  useContext(ThreadContext);
+
+  const onPopularClick = () => {
+    setSelectPopular(true);
+    setSelectRecent(false);
+    getFeed()
+  };
+  const onRecentClick = () => {
+    setSelectRecent(true);
+    setSelectPopular(false);
+    setFeed(
+      feed?.sort((obj1, obj2) => {
+        return (
+          DateTime.fromFormat(obj1?.date, "dd.mm.yyyy") -
+          DateTime.fromFormat(obj2?.date, "dd.mm.yyyy")
+        );
+      })
+    );
+  };
+
   return (
     <div className="feed-container">
       <div className="feed-header">
         <button
           className={selectPopular ? "header-link selected" : "header-link"}
-          onClick={() => setSelectPopular(true)}
+          onClick={() => onPopularClick()}
         >
           Popular
         </button>
         <button
-          className={selectPopular ? "header-link" : "header-link selected"}
-          onClick={() => setSelectPopular(false)}
+          className={!selectRecent ? "header-link" : "header-link selected"}
+          onClick={() => onRecentClick()}
         >
           Recents
         </button>
